@@ -4,7 +4,7 @@ import ch.njol.skript.Skript
 import org.bukkit.plugin.java.JavaPlugin
 
 object SkriptHook {
-    fun JavaPlugin.isSkriptPresent() = server.pluginManager.isPluginEnabled("Skript")
+    private fun JavaPlugin.isSkriptPresent() = server.pluginManager.isPluginEnabled("Skript")
 
     fun JavaPlugin.hook() {
         if (!isSkriptPresent()) {

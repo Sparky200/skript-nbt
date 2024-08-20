@@ -7,7 +7,7 @@ import java.lang.reflect.Method
  */
 class FunctionDef<ReceiverNullability, ReturnNullability>(
     val receiverClass: Class<*>,
-    val method: Method,
+    private val method: Method,
     val params: Array<out Class<*>>,
     val returnType: Class<*>) {
 
