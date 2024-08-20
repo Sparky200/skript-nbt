@@ -1,0 +1,11 @@
+name: skript-nbt
+version: $version
+api-version: 1.21
+main: dev.sparky200.skriptnbt.paper.PaperHook
+
+# The plugin is for Skript, but it is allowed to exist without it.
+softdepend:
+  - Skript
+
+#noinspection YAMLSchemaValidation
+libraries: $libraries
