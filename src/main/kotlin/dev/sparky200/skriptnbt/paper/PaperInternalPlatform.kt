@@ -34,8 +34,8 @@ class PaperInternalPlatform(override val mappings: MappingCollection) : Internal
     override fun nbtListGet(compound: Any, index: Int): Any =
         mappings.nbtListGetFunction(compound, index)
 
-    override fun nbtListAdd(compound: Any, index: Int, value: Any): Unit =
-        mappings.nbtListAddFunction(compound, index, value) as Unit
+    override fun nbtListAdd(compound: Any, index: Int, value: Any) =
+        mappings.nbtListAddFunction(compound, index, value) as? Unit ?: Unit
 
     override fun nbtByteTagGet(tag: Any): Byte =
         mappings.nbtByteTagGetFunction(tag) as Byte

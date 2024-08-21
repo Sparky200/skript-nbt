@@ -16,7 +16,12 @@ class ClassDef(val cl: Class<*>) {
     )
 
     fun constructor(vararg params: Class<*>): (Array<out Any?>) -> Any {
-        val constructor = cl.getDeclaredConstructor(*params) ?: cl.getConstructor(*params)
+        // Check both declared and non-declared
+        val constructor = try {
+            cl.getDeclaredConstructor(*params)
+        } catch (e: Exception) {
+            cl.getConstructor(*params)
+        }
         constructor.isAccessible = true
         return constructor::newInstance
     }
@@ -26,7 +31,6 @@ class ClassDef(val cl: Class<*>) {
      */
     operator fun invoke(): Any {
         val constructor = cl.getDeclaredConstructor() ?: cl.getConstructor()
-        constructor.isAccessible = true
         return constructor.newInstance()
     }
 
@@ -34,10 +38,15 @@ class ClassDef(val cl: Class<*>) {
      * Constructor call - only valid with not-null args
      */
     operator fun invoke(vararg args: Any): Any {
-        val params = args.map { it.javaClass }.toTypedArray()
-        val constructor = cl.getDeclaredConstructor(*params) ?: cl.getConstructor(*params)
-        constructor.isAccessible = true
-        return constructor.newInstance(args)
+        // Try primitive types over object types
+        val params = args.map { it.javaClass.kotlin.javaPrimitiveType ?: it.javaClass.kotlin.javaObjectType }.toTypedArray()
+        val constructor = try {
+            constructor(*params)
+        } catch (e: Exception) {
+            // If that doesn't work, try object types
+            constructor(*args.map { it.javaClass.kotlin.javaObjectType }.toTypedArray())
+        }
+        return constructor(args)
     }
 
 }
