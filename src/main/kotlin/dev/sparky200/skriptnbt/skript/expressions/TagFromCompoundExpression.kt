@@ -52,6 +52,7 @@ class TagFromCompoundExpression : PropertyExpression<MutableCompound, Any?>() {
             Changer.ChangeMode.SET -> arrayOf(
                 String::class.java,
                 Byte::class.java,
+                Short::class.java,
                 Int::class.java,
                 Long::class.java,
                 Float::class.java,
@@ -60,7 +61,6 @@ class TagFromCompoundExpression : PropertyExpression<MutableCompound, Any?>() {
                 ByteArray::class.java,
                 IntArray::class.java,
                 LongArray::class.java,
-                Char::class.java,
             )
             Changer.ChangeMode.DELETE,
             Changer.ChangeMode.RESET -> arrayOf()
