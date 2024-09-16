@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "2.0.0"
     id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("com.gradleup.shadow") version "8.3.1"
 }
 
 group = "dev.sparky200"
@@ -19,16 +20,16 @@ repositories {
 val provided: Configuration by configurations.creating
 
 // configure compileOnly to pull from provided dependencies
-configurations {
-    compileOnly {
-        extendsFrom(provided)
-    }
+configurations.compileOnly {
+    extendsFrom(provided)
 }
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.21.1-R0.1-SNAPSHOT")
 
     provided("org.jetbrains.kotlin:kotlin-stdlib:2.0.0")
+
+    implementation("net.benwoodworth.knbt:knbt:0.11.5")
 
     compileOnly("com.github.SkriptLang:Skript:2.9.1")
     compileOnly("org.jetbrains:annotations:24.1.0")
@@ -49,6 +50,10 @@ tasks.test {
 }
 kotlin {
     jvmToolchain(21)
+}
+
+tasks.build {
+    dependsOn(tasks.shadowJar)
 }
 
 tasks {

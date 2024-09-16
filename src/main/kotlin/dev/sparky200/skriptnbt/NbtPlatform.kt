@@ -1,6 +1,7 @@
 package dev.sparky200.skriptnbt
 
-import dev.sparky200.skriptnbt.nbt.NbtCompound
+import net.benwoodworth.knbt.NbtCompound
+import net.benwoodworth.knbt.NbtTag
 import org.bukkit.entity.Entity
 import org.jetbrains.annotations.ApiStatus
 import java.nio.file.Path
@@ -27,7 +28,18 @@ interface NbtPlatform {
     fun Entity.getNbt(): NbtCompound
     fun Entity.setNbt(compound: NbtCompound)
 
+    fun nbtToFile(path: Path, compound: NbtCompound)
     fun nbtFromFile(path: Path): NbtCompound
+
+    fun nbtToString(compound: NbtCompound): String
+    fun nbtFromString(string: String): NbtCompound
+
+    fun nbtTagOf(any: Any?): NbtTag =
+        nbtTagOfOrNull(any) ?: throw IllegalArgumentException("Invalid type: ${any?.javaClass?.name}")
+
+    fun nbtTagOfOrNull(any: Any?): NbtTag?
+
+    fun nbtValueOf(tag: NbtTag?): Any?
 
     companion object {
         @JvmStatic
@@ -38,9 +50,17 @@ interface NbtPlatform {
                 get() = throw error
 
             override fun nbtFromFile(path: Path) = throw error
+            override fun nbtToFile(path: Path, compound: NbtCompound) = throw error
+
+            override fun nbtFromString(string: String) = throw error
+            override fun nbtToString(compound: NbtCompound) = throw error
 
             override fun Entity.getNbt(): Nothing = throw error
             override fun Entity.setNbt(compound: NbtCompound) = throw error
+
+            override fun nbtTagOfOrNull(any: Any?) = throw error
+
+            override fun nbtValueOf(tag: NbtTag?) = throw error
 
         }
     }
