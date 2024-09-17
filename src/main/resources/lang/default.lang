@@ -1,0 +1,15 @@
+version: 1.0.0
+
+tag types:
+  byte: byte
+  short: short, int16
+  int: int, int32
+  long: long, int64
+  float: float, float32
+  double: double, float64
+  string: string
+  bytearray: byte array
+  intarray: int array, int32 array
+  longarray: long array, int64 array
+  list: list, nbt list
+  compound: compound, nbt compound

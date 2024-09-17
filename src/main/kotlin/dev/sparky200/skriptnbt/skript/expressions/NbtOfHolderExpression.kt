@@ -24,15 +24,13 @@ class NbtOfHolderExpression : SimplePropertyExpression<Any, MutableCompound>() {
         init {
             registerExpression(NbtOfHolderExpression::class.java, MutableCompound::class.java,
                 ExpressionType.PROPERTY,
-                "[:all] [:custom] nbt [compound] (of|from) %objects%",
+                "nbt [compound] (of|from) %objects%",
                 "nbt [compound] (of|from) file[s] %strings%",
                 "nbt [compound] (of|from) text %strings%"
             )
         }
     }
 
-    private var includeVanilla: Boolean = false
-    private var includeCustom: Boolean = false
     private var isFromFile: Boolean = false
     private var isFromText: Boolean = false
     private val canBeMutated get() = !isFromFile && !isFromText
@@ -128,8 +126,6 @@ class NbtOfHolderExpression : SimplePropertyExpression<Any, MutableCompound>() {
         parseResult: SkriptParser.ParseResult
     ): Boolean {
         if (!super.init(expressions, matchedPattern, isDelayed, parseResult)) return false
-        includeCustom = parseResult.hasTag("custom") || parseResult.hasTag("all")
-        includeVanilla = if (includeCustom) parseResult.hasTag("all") else false
         isFromFile = matchedPattern == 1
         isFromText = matchedPattern == 2
         return true
@@ -153,7 +149,5 @@ class NbtOfHolderExpression : SimplePropertyExpression<Any, MutableCompound>() {
     override fun getPropertyName(): String = "nbt compound"
 
     override fun toString(event: Event?, debug: Boolean): String =
-        (if (includeVanilla && includeCustom) "all " else "") +
-                (if (!includeVanilla && includeCustom) "custom " else "") +
-                "nbt of ${expr.toString(event, debug)}"
+        "nbt of ${expr.toString(event, debug)}"
 }

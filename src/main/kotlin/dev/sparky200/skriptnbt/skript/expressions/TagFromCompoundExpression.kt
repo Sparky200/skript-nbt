@@ -7,8 +7,8 @@ import ch.njol.skript.lang.Expression
 import ch.njol.skript.lang.ExpressionType
 import ch.njol.skript.lang.SkriptParser
 import ch.njol.util.Kleenean
-import dev.sparky200.skriptnbt.SkriptNbt
 import dev.sparky200.skriptnbt.skript.types.MutableCompound
+import dev.sparky200.skriptnbt.skript.types.NbtTagType
 import org.bukkit.event.Event
 
 class TagFromCompoundExpression : PropertyExpression<MutableCompound, Any?>() {
@@ -18,11 +18,12 @@ class TagFromCompoundExpression : PropertyExpression<MutableCompound, Any?>() {
                 TagFromCompoundExpression::class.java,
                 Any::class.java,
                 ExpressionType.PROPERTY,
-                "tag %strings% (of|from) %objects%"
+                "[%-*tagtype%] tag %string% (of|from) %object%"
             )
         }
     }
 
+    private var type: Expression<NbtTagType>? = null
     private lateinit var keys: Expression<String>
 
     override fun init(
@@ -33,9 +34,11 @@ class TagFromCompoundExpression : PropertyExpression<MutableCompound, Any?>() {
     ): Boolean {
 
         @Suppress("UNCHECKED_CAST")
-        keys = expressions[0] as? Expression<String> ?: return false
+        type = expressions[0] as? Expression<NbtTagType>?
         @Suppress("UNCHECKED_CAST")
-        expr = expressions[1]?.getConvertedExpression(MutableCompound::class.java)
+        keys = expressions[1] as? Expression<String> ?: return false
+        @Suppress("UNCHECKED_CAST")
+        expr = expressions[2]?.getConvertedExpression(MutableCompound::class.java)
                 as? Expression<MutableCompound> ?: return false
 
         return true
@@ -43,7 +46,11 @@ class TagFromCompoundExpression : PropertyExpression<MutableCompound, Any?>() {
 
     override fun get(event: Event, source: Array<out MutableCompound>): Array<out Any?> {
         val key = keys.getSingle(event)
-        return source.mapNotNull { it.map[key] }.toTypedArray()
+        return source.mapNotNull {
+            var value = it.map[key]
+            if (type != null) value = NbtTagType.enforceIs(type!!.getSingle(event)!!, value)
+            value
+        }.toTypedArray()
     }
 
     override fun acceptChange(mode: Changer.ChangeMode?): Array<out Class<*>?>? =
@@ -73,9 +80,18 @@ class TagFromCompoundExpression : PropertyExpression<MutableCompound, Any?>() {
 
         when (mode) {
             Changer.ChangeMode.SET -> {
-                if (delta.size == 1) compound.map[key] = with (SkriptNbt.platform) { nbtTagOf(delta[0]) }
+
+                if (delta.size == 1) {
+                    compound.map[key] =
+                        if (type != null)
+                            NbtTagType.enforceIs(type!!.getSingle(event)!!, delta[0])
+                        else delta[0]
+                }
                 else for (change in delta) {
-                    compound.map[key] = with (SkriptNbt.platform) { nbtTagOf(change) }
+                    compound.map[key] =
+                        if (type != null)
+                            NbtTagType.enforceIs(type!!.getSingle(event)!!, change)
+                        else change
                 }
             }
             Changer.ChangeMode.DELETE, Changer.ChangeMode.RESET -> {

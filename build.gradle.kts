@@ -31,7 +31,7 @@ dependencies {
 
     implementation("net.benwoodworth.knbt:knbt:0.11.5")
 
-    compileOnly("com.github.SkriptLang:Skript:2.9.1")
+    compileOnly("com.github.SkriptLang:Skript:2.9.2")
     compileOnly("org.jetbrains:annotations:24.1.0")
 
     testImplementation(kotlin("test"))
@@ -41,7 +41,7 @@ tasks.runServer {
     minecraftVersion("1.21")
 
     downloadPlugins {
-        github("SkriptLang", "Skript", "2.9.1", "Skript-2.9.1.jar")
+        github("SkriptLang", "Skript", "2.9.2", "Skript-2.9.2.jar")
     }
 }
 

@@ -4,6 +4,7 @@ import ch.njol.skript.Skript
 import dev.sparky200.skriptnbt.skript.expressions.NbtOfHolderExpression
 import dev.sparky200.skriptnbt.skript.expressions.TagFromCompoundExpression
 import dev.sparky200.skriptnbt.skript.types.NbtCompoundType
+import dev.sparky200.skriptnbt.skript.types.NbtTagType
 import org.bukkit.plugin.java.JavaPlugin
 
 object SkriptHook {
@@ -24,10 +25,11 @@ object SkriptHook {
         logger.info("Skript found at '${skript.javaClass.name}' (version ${skript.description.version}).")
 
         with (Skript.registerAddon(this)) {
-            // TODO remove if not needed
+            setLanguageFileDirectory("lang")
         }
 
         NbtCompoundType
+        NbtTagType
         NbtOfHolderExpression
         TagFromCompoundExpression
     }
