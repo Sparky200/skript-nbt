@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "2.0.0"
     id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("com.gradleup.shadow") version "8.3.1"
 }
 
 group = "dev.sparky200"
@@ -19,10 +20,8 @@ repositories {
 val provided: Configuration by configurations.creating
 
 // configure compileOnly to pull from provided dependencies
-configurations {
-    compileOnly {
-        extendsFrom(provided)
-    }
+configurations.compileOnly {
+    extendsFrom(provided)
 }
 
 dependencies {
@@ -30,7 +29,9 @@ dependencies {
 
     provided("org.jetbrains.kotlin:kotlin-stdlib:2.0.0")
 
-    compileOnly("com.github.SkriptLang:Skript:2.9.1")
+    implementation("net.benwoodworth.knbt:knbt:0.11.5")
+
+    compileOnly("com.github.SkriptLang:Skript:2.9.2")
     compileOnly("org.jetbrains:annotations:24.1.0")
 
     testImplementation(kotlin("test"))
@@ -40,7 +41,7 @@ tasks.runServer {
     minecraftVersion("1.21")
 
     downloadPlugins {
-        github("SkriptLang", "Skript", "2.9.1", "Skript-2.9.1.jar")
+        github("SkriptLang", "Skript", "2.9.2", "Skript-2.9.2.jar")
     }
 }
 
@@ -49,6 +50,10 @@ tasks.test {
 }
 kotlin {
     jvmToolchain(21)
+}
+
+tasks.build {
+    dependsOn(tasks.shadowJar)
 }
 
 tasks {
